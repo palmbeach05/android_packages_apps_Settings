@@ -255,7 +255,6 @@ public class SecuritySettings extends RestrictedSettingsFragment
             }
         }
 
-
         // Show password
         mShowPassword = (CheckBoxPreference) root.findPreference(KEY_SHOW_PASSWORD);
         mResetCredentials = root.findPreference(KEY_RESET_CREDENTIALS);
@@ -318,6 +317,13 @@ public class SecuritySettings extends RestrictedSettingsFragment
                     root.findPreference(KEY_APP_SECURITY_CATEGORY);
             appCategory.removePreference(mBlacklist);
             appCategory.removePreference(mSmsSecurityCheck);
+        }
+
+        // WhisperPush
+        // Only add if device has telephony support and has WhisperPush installed.
+        if (pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)
+                && isPackageInstalled("org.whispersystems.whisperpush")) {
+            addPreferencesFromResource(R.xml.security_settings_whisperpush);
         }
 
         mNotificationAccess = findPreference(KEY_NOTIFICATION_ACCESS);

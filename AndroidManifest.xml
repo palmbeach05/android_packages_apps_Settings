@@ -1446,7 +1446,6 @@
         </activity>
 
         <activity android:name="Settings$WifiDisplaySettingsActivity"
-                android:uiOptions="splitActionBarWhenNarrow"
                 android:label="@string/wifi_display_settings_title"
                 android:taskAffinity=""
                 android:excludeFromRecents="true">
@@ -1752,11 +1751,7 @@
                 android:value="com.android.settings.cmstats.AnonymousStats" />
         </activity>
 
-        <activity android:name=".cyanogenmod.ChangeLog" android:label="@string/changelog_title">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-            </intent-filter>
-        </activity>
+        <activity android:name=".cyanogenmod.ChangeLog" />
 
         <activity android:name=".cyanogenmod.LockscreenInterface" />
 
@@ -1791,7 +1786,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.app.action.START_ENCRYPTION" />
-                <category android:name="android.intent.category.DEFAULT" /> />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data android:name="com.android.settings.FRAGMENT_CLASS"
                 android:value="com.android.settings.CryptKeeperSettings" />
