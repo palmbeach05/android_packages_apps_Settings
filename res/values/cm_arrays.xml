@@ -14,7 +14,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Wi-Fi settings. Presented as a list dialog to the user to choose the Wi-Fi region code. -->
     <string-array name="wifi_countrycode_entries">
         <item>United States</item>
@@ -77,6 +77,32 @@
         <item>normal</item>
         <item>vibrate</item>
         <item>mute</item>
+    </string-array>
+
+    <string-array name="lockscreen_delay_entries" translatable="false">
+        <item>@string/slide_lock_delay_none</item>
+        <item>@string/slide_lock_delay_1s</item>
+        <item>@string/slide_lock_delay_5s</item>
+        <item>@string/slide_lock_delay_10s</item>
+        <item>@string/slide_lock_delay_15s</item>
+        <item>@string/slide_lock_delay_30s</item>
+        <item>@string/slide_lock_delay_1m</item>
+        <item>@string/slide_lock_delay_5m</item>
+        <item>@string/slide_lock_delay_10m</item>
+        <item>@string/slide_lock_delay_30m</item>
+    </string-array>
+
+    <string-array name="lockscreen_delay_values" translatable="false">
+        <item>0</item>
+        <item>1000</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>30000</item>
+        <item>60000</item>
+        <item>300000</item>
+        <item>600000</item>
+        <item>1800000</item>
     </string-array>
 
     <string-array name="lockscreen_icon_picker_labels" translatable="false">
@@ -409,6 +435,19 @@
         <item>5</item>
     </string-array>
 
+    <!-- Volume key cursor control -->
+    <string-array name="volbtn_cursor_control_entries" translatable="false">
+        <item>@string/volbtn_cursor_control_off</item>
+        <item>@string/volbtn_cursor_control_on</item>
+        <item>@string/volbtn_cursor_control_on_reverse</item>
+    </string-array>
+
+    <string-array name="volbtn_cursor_control_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <!-- Expanded desktop -->
     <string-array name="expanded_desktop_entries" translatable="false">
         <item>@string/expanded_desktop_disabled</item>
@@ -423,16 +462,16 @@
     </string-array>
 
     <string-array name="entries_status_bar_battery" translatable="false">
-        <item>@string/status_bar_style_icon</item>
-        <item>@string/status_bar_battery_status_circle</item>
-        <item>@string/status_bar_battery_status_circle_percentage</item>
+        <item>@string/status_bar_style_icon_portrait</item>
+        <item>@string/status_bar_style_icon_landscape</item>
+        <item>@string/status_bar_style_circle</item>
         <item>@string/status_bar_style_hidden</item>
     </string-array>
 
     <string-array name="values_status_bar_battery" translatable="false">
         <item>0</item>
+        <item>5</item>
         <item>2</item>
-        <item>3</item>
         <item>4</item>
     </string-array>
 </resources>
