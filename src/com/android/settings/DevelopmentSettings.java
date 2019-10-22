@@ -256,6 +256,7 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
 
     private boolean mUnavailable;
     private Dialog mRootDialog;
+    private Dialog mUpdateRecoveryDialog;
 
     public DevelopmentSettings() {
         super(RESTRICTIONS_PIN_SET);
@@ -393,6 +394,15 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
 
         mDevelopmentTools = (PreferenceScreen) findPreference(DEVELOPMENT_TOOLS);
         mAllPrefs.add(mDevelopmentTools);
+
+        if (!getResources().getBoolean(R.bool.config_enableRecoveryUpdater)) {
+            removePreference(mUpdateRecovery);
+            mUpdateRecovery = null;
+            if (SystemProperties.getBoolean(UPDATE_RECOVERY_PROPERTY, false)) {
+                SystemProperties.set(UPDATE_RECOVERY_PROPERTY, "false");
+                pokeSystemProperties();
+            }
+        }
     }
 
     private ListPreference addListPreference(String prefKey) {
@@ -603,7 +613,9 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
         updateRootAccessOptions();
         updateAdvancedRebootOptions();
         updateDevelopmentShortcutOptions();
-        updateUpdateRecoveryOptions();
+        if (mUpdateRecovery != null) {
+            updateUpdateRecoveryOptions();
+        }
     }
 
     private void writeAdvancedRebootOptions() {
@@ -675,6 +687,9 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
         resetAdbNotifyOptions();
         resetVerifyAppsOverUsbOptions();
         resetDevelopmentShortcutOptions();
+        if (mUpdateRecovery != null) {
+            resetUpdateRecoveryOptions();
+        }
         writeAnimationScaleOption(0, mWindowAnimationScale, null);
         writeAnimationScaleOption(1, mTransitionAnimationScale, null);
         writeAnimationScaleOption(2, mAnimatorDurationScale, null);
@@ -810,6 +825,10 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
 
     private void updatePasswordSummary() {
         try {
+            if (mBackupManager == null) {
+               Log.e(TAG, "Backup Manager is unavailable!");
+               return;
+            }
             if (mBackupManager.hasBackupPassword()) {
                 mPassword.setSummary(R.string.local_backup_password_summary_change);
             } else {
@@ -1334,12 +1353,21 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
     }
 
     private void updateUpdateRecoveryOptions() {
-        updateCheckBox(mUpdateRecovery, SystemProperties.getBoolean(UPDATE_RECOVERY_PROPERTY, false));
+        updateCheckBox(mUpdateRecovery, SystemProperties.getBoolean(UPDATE_RECOVERY_PROPERTY,
+                false));
     }
 
     private void writeUpdateRecoveryOptions() {
-        SystemProperties.set(UPDATE_RECOVERY_PROPERTY, mUpdateRecovery.isChecked() ? "true" : "false");
+        SystemProperties.set(UPDATE_RECOVERY_PROPERTY,
+                mUpdateRecovery.isChecked() ? "true" : "false");
         pokeSystemProperties();
+    }
+
+    private void resetUpdateRecoveryOptions() {
+        // User builds should update recovery by default
+        if ("user".equals(Build.TYPE)) {
+            SystemProperties.set(UPDATE_RECOVERY_PROPERTY, "true");
+        }
     }
 
     @Override
@@ -1526,7 +1554,27 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
         } else if (preference == mKillAppLongpressBack) {
             writeKillAppLongpressBackOptions();
         } else if (preference == mUpdateRecovery) {
-            writeUpdateRecoveryOptions();
+            if (mEnabledSwitch.isChecked()) {
+                if (mUpdateRecoveryDialog != null) {
+                    dismissDialogs();
+                }
+                if (mUpdateRecovery.isChecked()) {
+                    mUpdateRecoveryDialog = new AlertDialog.Builder(getActivity()).setMessage(
+                            getResources().getString(R.string.update_recovery_on_warning))
+                            .setTitle(R.string.update_recovery_title)
+                            .setPositiveButton(android.R.string.yes, this)
+                            .setNegativeButton(android.R.string.no, this)
+                            .show();
+                } else {
+                    mUpdateRecoveryDialog = new AlertDialog.Builder(getActivity()).setMessage(
+                            getResources().getString(R.string.update_recovery_off_warning))
+                            .setTitle(R.string.update_recovery_title)
+                            .setPositiveButton(android.R.string.yes, this)
+                            .setNegativeButton(android.R.string.no, this)
+                            .show();
+                }
+                mUpdateRecoveryDialog.setOnDismissListener(this);
+            }
         } else {
             return super.onPreferenceTreeClick(preferenceScreen, preference);
         }
@@ -1650,6 +1698,10 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
             mRootDialog.dismiss();
             mRootDialog = null;
         }
+        if (mUpdateRecoveryDialog != null) {
+            mUpdateRecoveryDialog.dismiss();
+            mUpdateRecoveryDialog = null;
+        }
     }
 
     public void onClick(DialogInterface dialog, int which) {
@@ -1699,6 +1751,10 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
                 // Reset the option
                 writeRootAccessOptions("0");
             }
+        } else if (dialog == mUpdateRecoveryDialog) {
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                writeUpdateRecoveryOptions();
+            }
         }
     }
 
@@ -1719,6 +1775,9 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
                 mEnabledSwitch.setChecked(false);
             }
             mEnableDialog = null;
+        } else if (dialog == mUpdateRecoveryDialog) {
+            updateUpdateRecoveryOptions();
+            mUpdateRecoveryDialog = null;
         }
     }
 
